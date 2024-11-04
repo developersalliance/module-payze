@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <virtualType name="PayzeFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">DevAll\Payze\Model\Ui\ConfigProvider::CODE</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Magento\Payment\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">PayzeValueHandlerPool</argument>
+            <argument name="validatorPool" xsi:type="object">PayzeValidatorPool</argument>
+            <argument name="commandPool" xsi:type="object">PayzeCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Value Handler Pool -->
+    <virtualType name="PayzeValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">PayzeConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PayzeConfigValueReader" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">DevAll\Payze\Model\Ui\ConfigProvider::CODE</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PayzeConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">PayzeConfigValueReader</argument>
+        </arguments>
+    </virtualType>
+    <!-- Value Handler Pool END -->
+
+    <!-- Validator Pool -->
+    <virtualType name="PayzeValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="default" xsi:type="string">PayzeValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PayzeValidator" type="Magento\Payment\Gateway\Validator\AbstractValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">PayzeConfigValueReader</argument>
+        </arguments>
+    </virtualType>
+    <!-- Validator Pool END -->
+
+    <!-- Command Pool -->
+    <virtualType name="PayzeCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="authorize" xsi:type="string">PayzeAuthorizeCommand</item>
+                <item name="capture" xsi:type="string">BraintreeCaptureStrategyCommand</item>
+                <item name="refund" xsi:type="string">BraintreeRefundCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- Command Pool END -->
+
+    <!-- Commands -->
+    <virtualType name="PayzeAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">DevAll\Payze\Gateway\Request\PaymentDataBuilder</argument>
+            <argument name="transferFactory" xsi:type="object">DevAll\Payze\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">DevAll\Payze\Gateway\Http\Client\Guzzle</argument>
+            <argument name="validator" xsi:type="null"/>
+            <argument name="handler" xsi:type="object">DevAll\Payze\Gateway\Response\PaymentDetailsHandler</argument>
+        </arguments>
+    </virtualType>
+    <!-- Commands END -->
+    <type name="DevAll\Payze\Model\Ui\ConfigProvider">
+        <arguments>
+            <argument name="config" xsi:type="object">PayzeConfigValueReader</argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Config\Model\Config\TypePool">
+        <arguments>
+            <argument name="sensitive" xsi:type="array">
+                <item name="payment/payze/api_secret" xsi:type="string">1</item>
+            </argument>
+            <argument name="environment" xsi:type="array">
+                <item name="payment/payze/api_secret" xsi:type="string">1</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="DevAll\Payze\Gateway\Http\Client\Guzzle">
+        <arguments>
+            <argument name="converter" xsi:type="object">DevAll\Payze\Gateway\Http\JsonToArrayConverter</argument>
+        </arguments>
+    </type>
+</config>
