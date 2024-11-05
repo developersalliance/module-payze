@@ -44,7 +44,7 @@ class Redirect implements HttpGetActionInterface
             }
 
             $payment = $order->getPayment();
-            $redirectUrl = $payment->getAdditionalInformation()['payment_url'];
+            $redirectUrl = $payment->getAdditionalInformation()['payze_authorize']['payment_url'];
 
             return $this->redirectFactory->create()
                 ->setUrl($redirectUrl);

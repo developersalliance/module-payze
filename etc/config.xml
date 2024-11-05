@@ -15,7 +15,7 @@
                 <can_authorize>1</can_authorize>
                 <can_capture>1</can_capture>
                 <can_refund>1</can_refund>
-                <order_status>processing</order_status>
+                <order_status>pending</order_status>
                 <group>payze_group</group>
             </payze>
         </payment>
