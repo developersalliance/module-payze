@@ -10,10 +10,11 @@ use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\Result\RedirectFactory;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
 use Psr\Log\LoggerInterface;
 
-class Success implements HttpGetActionInterface
+class Result implements HttpGetActionInterface
 {
     /**
      * @param RequestInterface $request
@@ -40,7 +41,16 @@ class Success implements HttpGetActionInterface
         $transactionId = $this->request->getParam('payment_transaction_id');
 
         try {
-            $this->orderTransactionService->process($transactionId);
+            if (!$transactionId) {
+                $this->logger->error('Payze Order Result. Error: The order transaction id is not valid');
+                throw new LocalizedException(__('The order transaction id is not valid!'));
+            }
+
+            try {
+                $this->orderTransactionService->process($transactionId);
+            } catch (\Exception $e) {
+                $this->logger->critical($e->getMessage());
+            }
 
             return $this->redirectFactory->create()->setPath('checkout/onepage/success');
         } catch (\Exception $e) {

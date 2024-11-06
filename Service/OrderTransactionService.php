@@ -38,7 +38,6 @@ class OrderTransactionService
     public function process(string $transactionId): void
     {
         $pzOrder = $this->pzOrderRepository->getByTransactionId($transactionId);
-
         $order = $this->orderRepository->get($pzOrder->getOrderId());
 
         if ($order->getState() === Order::STATE_CLOSED) {
@@ -58,6 +57,58 @@ class OrderTransactionService
     }
 
     /**
+     * Refund order transaction
+     *
+     * @param string $transactionId
+     * @return void
+     * @throws AlreadyExistsException
+     * @throws InputException
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     */
+    public function processRefund(string $transactionId): void
+    {
+        $pzOrder = $this->pzOrderRepository->getByTransactionId($transactionId);
+        $order = $this->orderRepository->get($pzOrder->getOrderId());
+
+        if ($order->getState() === Order::STATE_CLOSED) {
+            $this->logger->info('Don\'t need to update order because state is already closed '. $transactionId);
+            return;
+        }
+
+        /** @var Payment $payment */
+        $payment = $order->getPayment();
+
+        $this->refund($payment, $order, $transactionId);
+    }
+
+    /**
+     * @param Payment $payment
+     * @param OrderInterface $order
+     * @param string $transactionId
+     * @return void
+     * @throws AlreadyExistsException
+     * @throws InputException
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     */
+    public function refund(Payment $payment, OrderInterface $order, string $transactionId): void
+    {
+        $payment->setTransactionId($transactionId);
+        $payment->setCurrencyCode($order->getBaseCurrencyCode());
+        $payment->setNotificationResult(true);
+        $payment->registerRefundNotification();
+        $payment->setIsTransactionClosed(true);
+        $order->setState(Order::STATE_PROCESSING);
+
+        if (Order::STATE_PROCESSING === $order->getState()) {
+            $order->addCommentToStatusHistory(__('Order processed by Payze.'), Order::STATE_PROCESSING);
+        }
+
+        $this->orderRepository->save($order);
+    }
+
+    /**
      * Capture payment and change order state to processing
      *
      * @param Payment $payment
@@ -65,14 +116,14 @@ class OrderTransactionService
      * @param string $transactionId
      * @throws AlreadyExistsException
      * @throws InputException
-     * @throws NoSuchEntityException
+     * @throws NoSuchEntityException|LocalizedException
      */
     private function capture(Payment $payment, OrderInterface $order, string $transactionId): void
     {
         $payment->setTransactionId($transactionId);
         $payment->setCurrencyCode($order->getBaseCurrencyCode());
         $payment->setNotificationResult(true);
-        $payment->registerCaptureNotification($order->getBaseGrandTotal(), true);
+        $payment->capture();
         $payment->setIsTransactionClosed(true);
         $order->setState(Order::STATE_PROCESSING);
 

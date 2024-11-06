@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DevAll\Payze\Controller\Payment;
 
+use DevAll\Payze\Service\OrderService;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\ResponseInterface;
@@ -22,12 +23,14 @@ class Redirect implements HttpGetActionInterface
      * @param LoggerInterface $logger
      * @param RedirectFactory $redirectFactory
      * @param MessageManagerInterface $messageManager
+     * @param OrderService $orderService
      */
     public function __construct(
         private readonly Session $checkoutSession,
         private readonly LoggerInterface $logger,
         private readonly RedirectFactory $redirectFactory,
         private readonly MessageManagerInterface $messageManager,
+        private readonly OrderService $orderService
     ) {}
 
     /**
@@ -45,6 +48,16 @@ class Redirect implements HttpGetActionInterface
 
             $payment = $order->getPayment();
             $redirectUrl = $payment->getAdditionalInformation()['payze_authorize']['payment_url'];
+            $transactionId = $payment->getAdditionalInformation()['payze_authorize']['transaction_id'];
+            $pzOrder = $this->orderService->create(
+                (int) $order->getEntityId(),
+                (string) $transactionId,
+                (string) $redirectUrl
+            );
+
+            if (!$pzOrder->getTransactionId()) {
+                throw new LocalizedException(__('Something went wrong while processing the order.'));
+            }
 
             return $this->redirectFactory->create()
                 ->setUrl($redirectUrl);

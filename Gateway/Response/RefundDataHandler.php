@@ -9,7 +9,7 @@ use Magento\Payment\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Response\HandlerInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 
-class AuthorizeDataHandler implements HandlerInterface
+class RefundDataHandler implements HandlerInterface
 {
     use Formatter;
 
@@ -21,12 +21,6 @@ class AuthorizeDataHandler implements HandlerInterface
         $paymentDO = SubjectReader::readPayment($handlingSubject);
         /** @var OrderPaymentInterface $payment */
         $payment = $paymentDO->getPayment();
-        $payzeInfo = [];
-        $payment->setLastTransId($response['data']['payment']['transactionId']);
-        foreach ($response['data']['payment'] as $key => $value) {
-            $payzeInfo[$this->camelToUnderscore($key)] = $value;
-        }
-
-        $payment->setAdditionalInformation('payze_authorize', $payzeInfo);
+        $payment->setIsTransactionClosed(true);
     }
 }
