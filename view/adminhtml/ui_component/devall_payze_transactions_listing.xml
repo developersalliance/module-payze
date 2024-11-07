@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">
+                devall_payze_transactions_listing.devall_payze_transactions_listing_data_source
+            </item>
+        </item>
+    </argument>
+    <settings>
+        <deps>
+            <dep>devall_payze_transactions_listing.devall_payze_transactions_listing_data_source</dep>
+        </deps>
+        <spinner>devall_payze_transactions_columns</spinner>
+    </settings>
+    <dataSource name="devall_payze_transactions_listing_data_source" component="Magento_Ui\js\grid\provider">
+        <settings>
+            <updateUrl path="mui/index/render"/>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">id</param>
+            </storageConfig>
+        </settings>
+        <aclResource>DevAll_Payze::transactions</aclResource>
+        <dataProvider name="devall_payze_transactions_listing_data_source"
+                      class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <settings>
+            <sticky>true</sticky>
+        </settings>
+        <paging name="listing_paging"/>
+        <columnsControls name="columns_controls"/>
+        <bookmark name="bookmarks"/>
+        <filters name="listing_filters">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="applied" xsi:type="array">
+                        <item name="is_published" xsi:type="string">1</item>
+                    </item>
+                </item>
+            </argument>
+        </filters>
+        <filterSearch name="fulltext"/>
+    </listingToolbar>
+    <columns name="devall_payze_transactions_columns">
+        <settings>
+            <childDefaults>
+                <param name="fieldAction" xsi:type="array">
+                    <item name="provider" xsi:type="string">
+                        devall_payze_transactions_listing.devall_payze_transactions_listing.devall_payze_transactions_columns_editor
+                    </item>
+                    <item name="target" xsi:type="string">startEdit</item>
+                    <item name="params" xsi:type="array">
+                        <item name="0" xsi:type="string">${ $.$data.rowIndex }</item>
+                        <item name="1" xsi:type="boolean">true</item>
+                    </item>
+                </param>
+            </childDefaults>
+        </settings>
+        <selectionsColumn name="ids">
+            <settings>
+                <indexField>id</indexField>
+            </settings>
+        </selectionsColumn>
+        <column name="id">
+            <settings>
+                <label translate="true">ID</label>
+                <filter>textRange</filter>
+            </settings>
+        </column>
+        <column name="order_id">
+            <settings>
+                <label translate="true">Order ID</label>
+                <filter>textRange</filter>
+            </settings>
+        </column>
+        <column name="transaction_id">
+            <settings>
+                <label translate="true">Transaction ID</label>
+                <filter>text</filter>
+            </settings>
+        </column>
+        <column name="payment_url">
+            <settings>
+                <label translate="true">Paymant Url</label>
+                <filter>text</filter>
+            </settings>
+        </column>
+        <column name="created_at" component="Magento_Ui/js/grid/columns/date">
+            <settings>
+                <label translate="true">Created at</label>
+                <filter>dateRange</filter>
+            </settings>
+        </column>
+        <column name="updated_at" component="Magento_Ui/js/grid/columns/date">
+            <settings>
+                <label translate="true">Updated at</label>
+                <filter>dateRange</filter>
+            </settings>
+        </column>
+<!--        <actionsColumn name="actions" class="Macademy\Minerva\Ui\Component\Listing\Column\Actions"/>-->
+    </columns>
+</listing>
+

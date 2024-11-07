@@ -47,20 +47,22 @@ class Redirect implements HttpGetActionInterface
             }
 
             $payment = $order->getPayment();
-            $redirectUrl = $payment->getAdditionalInformation()['payze_authorize']['payment_url'];
             $transactionId = $payment->getAdditionalInformation()['payze_authorize']['transaction_id'];
             $pzOrder = $this->orderService->create(
                 (int) $order->getEntityId(),
-                (string) $transactionId,
-                (string) $redirectUrl
+                $transactionId
             );
 
             if (!$pzOrder->getTransactionId()) {
                 throw new LocalizedException(__('Something went wrong while processing the order.'));
             }
 
+            if (!$pzOrder->getPaymentUrl()) {
+                throw new LocalizedException(__('Payment URL does not exist'));
+            }
+
             return $this->redirectFactory->create()
-                ->setUrl($redirectUrl);
+                ->setUrl($pzOrder->getPaymentUrl());
         } catch (\Exception $exception) {
             $this->logger->critical($exception->getMessage());
 

@@ -12,8 +12,14 @@ interface OrderInterface
     public const ORDER_ID = 'order_id';
     public const TRANSACTION_ID = 'transaction_id';
     public const PAYMENT_URL = 'payment_url';
+    public const PAYMENT_TYPE = 'payment_type';
+    public const PAYMENT_SOURCE = 'payment_source';
+    public const CARD_MASK = 'card_mask';
+    public const CARD_EXPIRATION = 'card_expiration';
+    public const STATUS = 'status';
     public const CREATED_AT = 'created_at';
     public const UPDATED_AT = 'updated_at';
+
 
     /**
      * Get order id
@@ -48,17 +54,92 @@ interface OrderInterface
     /**
      * Get payment url
      *
-     * @return string
+     * @return string|null
      */
-    public function getPaymentUrl(): string;
+    public function getPaymentUrl(): ?string;
 
     /**
      * Set payment url
      *
-     * @param string $paymentUrl
+     * @param ?string $paymentUrl
      * @return OrderInterface
      */
-    public function setPaymentUrl(string $paymentUrl): OrderInterface;
+    public function setPaymentUrl(?string $paymentUrl): OrderInterface;
+
+    /**
+     * Get payment type
+     *
+     * @return ?string
+     */
+    public function getPaymentType(): ?string;
+
+    /**
+     * Set payment type
+     *
+     * @param ?string $paymentType
+     * @return OrderInterface
+     */
+    public function setPaymentType(?string $paymentType): OrderInterface;
+
+    /**
+     * Get payment source
+     *
+     * @return ?string
+     */
+    public function getPaymentSource(): ?string;
+
+    /**
+     * Set payment source
+     *
+     * @param ?string $paymentSource
+     * @return OrderInterface
+     */
+    public function setPaymentSource(?string $paymentSource): OrderInterface;
+
+    /**
+     * Get card mask
+     *
+     * @return ?string
+     */
+    public function getCardMask(): ?string;
+
+    /**
+     * Set card mask
+     *
+     * @param ?string $cardMask
+     * @return OrderInterface
+     */
+    public function setCardMask(?string $cardMask): OrderInterface;
+
+    /**
+     * Get card expiration
+     *
+     * @return ?string
+     */
+    public function getCardExpiration(): ?string;
+
+    /**
+     * Set card expiration
+     *
+     * @param ?string $cardExpiration
+     * @return OrderInterface
+     */
+    public function setCardExpiration(?string $cardExpiration): OrderInterface;
+
+    /**
+     * Get status
+     *
+     * @return ?string
+     */
+    public function getStatus(): ?string;
+
+    /**
+     * Set status
+     *
+     * @param ?string $status
+     * @return OrderInterface
+     */
+    public function setStatus(?string $status): OrderInterface;
 
     /**
      * Get created at

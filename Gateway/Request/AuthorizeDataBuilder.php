@@ -4,27 +4,21 @@ declare(strict_types=1);
 
 namespace DevAll\Payze\Gateway\Request;
 
-use DevAll\Payze\Model\Ui\ConfigProvider;
 use Magento\Framework\UrlInterface;
 use Magento\Payment\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 
 class AuthorizeDataBuilder implements BuilderInterface
 {
-    public const PAYZE_API_URI = 'https://payze.io/v2/api/payment/';
-    public const METHOD = 'PUT';
-
     public const WEBHOOK_GATEWAY = 'payze/payment/webhook';
     public const RESULT_REDIRECT_GATEWAY = 'payze/payment/result';
 
     /**
      * @param SubjectReader $subjectReader
-     * @param ConfigProvider $configProvider
      * @param UrlInterface $urlBuilder
      */
     public function __construct(
         private readonly SubjectReader $subjectReader,
-        private readonly ConfigProvider $configProvider,
         private readonly UrlInterface $urlBuilder
     ) {}
 
@@ -51,18 +45,6 @@ class AuthorizeDataBuilder implements BuilderInterface
                     'preauthorize' => true
                 ]
             ],
-            'api' => [
-                'uri' => self::PAYZE_API_URI,
-                'method' => self::METHOD,
-                'headers' => [
-                    'Authorization' => \sprintf(
-                        '%s:%s',
-                        $this->configProvider->getApiKey(),
-                        $this->configProvider->getApiSecret()
-                    ),
-                    'Content-Type' => 'application/json'
-                ]
-            ]
         ];
     }
 }

@@ -44,7 +44,7 @@ class Order extends AbstractExtensibleModel implements OrderInterface
     /**
      * @inheritDoc
      */
-    public function getPaymentUrl(): string
+    public function getPaymentUrl(): ?string
     {
         return $this->getData(self::PAYMENT_URL);
     }
@@ -52,9 +52,89 @@ class Order extends AbstractExtensibleModel implements OrderInterface
     /**
      * @inheritDoc
      */
-    public function setPaymentUrl(string $paymentUrl): OrderInterface
+    public function setPaymentUrl(?string $paymentUrl): OrderInterface
     {
         return $this->setData(self::PAYMENT_URL, $paymentUrl);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPaymentType(): ?string
+    {
+        return $this->getData(self::PAYMENT_TYPE);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setPaymentType(?string $paymentType): OrderInterface
+    {
+        return $this->setData(self::PAYMENT_TYPE, $paymentType);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPaymentSource(): ?string
+    {
+        return $this->getData(self::PAYMENT_SOURCE);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setPaymentSource(?string $paymentSource): OrderInterface
+    {
+        return $this->setData(self::PAYMENT_SOURCE, $paymentSource);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCardMask(): ?string
+    {
+        return $this->getData(self::CARD_MASK);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setCardMask(?string $cardMask): OrderInterface
+    {
+        return $this->setData(self::CARD_MASK, $cardMask);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCardExpiration(): ?string
+    {
+        return $this->getData(self::CARD_EXPIRATION);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setCardExpiration(?string $cardExpiration): OrderInterface
+    {
+        return $this->setData(self::CARD_EXPIRATION, $cardExpiration);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getStatus(): ?string
+    {
+        return $this->getData(self::STATUS);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setStatus(?string $status): OrderInterface
+    {
+        return $this->setData(self::STATUS, $status);
     }
 
     /**

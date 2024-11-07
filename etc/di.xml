@@ -66,7 +66,7 @@
     <!-- Commands -->
     <virtualType name="PayzeAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
         <arguments>
-            <argument name="requestBuilder" xsi:type="object">DevAll\Payze\Gateway\Request\AuthorizeDataBuilder</argument>
+            <argument name="requestBuilder" xsi:type="object">PayzeAuthorizeRequest</argument>
             <argument name="transferFactory" xsi:type="object">DevAll\Payze\Gateway\Http\TransferFactory</argument>
             <argument name="client" xsi:type="object">DevAll\Payze\Gateway\Http\Client\Guzzle</argument>
             <argument name="validator" xsi:type="null"/>
@@ -74,9 +74,26 @@
         </arguments>
     </virtualType>
 
+    <virtualType name="PayzeAuthorizeRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="payment" xsi:type="string">DevAll\Payze\Gateway\Request\AuthorizeDataBuilder</item>
+                <item name="order" xsi:type="string">DevAll\Payze\Gateway\Request\OrderDataBuilder</item>
+                <item name="api" xsi:type="string">AuthorizeApiBuilder</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="AuthorizeApiBuilder" type="DevAll\Payze\Gateway\Request\ApiDataBuilder">
+        <arguments>
+            <argument name="method" xsi:type="string">PUT</argument>
+            <argument name="payzeApiUri" xsi:type="string">https://payze.io/v2/api/payment</argument>
+        </arguments>
+    </virtualType>
+
     <virtualType name="PayzeCaptureCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
         <arguments>
-            <argument name="requestBuilder" xsi:type="object">DevAll\Payze\Gateway\Request\CaptureDataBuilder</argument>
+            <argument name="requestBuilder" xsi:type="object">PayzeCaptureRequest</argument>
             <argument name="transferFactory" xsi:type="object">DevAll\Payze\Gateway\Http\TransferFactory</argument>
             <argument name="client" xsi:type="object">DevAll\Payze\Gateway\Http\Client\Guzzle</argument>
             <argument name="validator" xsi:type="null"/>
@@ -84,15 +101,49 @@
         </arguments>
     </virtualType>
 
+    <virtualType name="PayzeCaptureRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="payment" xsi:type="string">DevAll\Payze\Gateway\Request\CaptureDataBuilder</item>
+                <item name="api" xsi:type="string">CaptureApiBuilder</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="CaptureApiBuilder" type="DevAll\Payze\Gateway\Request\ApiDataBuilder">
+        <arguments>
+            <argument name="method" xsi:type="string">PUT</argument>
+            <argument name="payzeApiUri" xsi:type="string">https://payze.io/v2/api/payment/capture</argument>
+        </arguments>
+    </virtualType>
+
     <virtualType name="PayzeRefundCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
         <arguments>
-            <argument name="requestBuilder" xsi:type="object">DevAll\Payze\Gateway\Request\RefundDataBuilder</argument>
+            <argument name="requestBuilder" xsi:type="object">PayzeRefundRequest</argument>
             <argument name="transferFactory" xsi:type="object">DevAll\Payze\Gateway\Http\TransferFactory</argument>
             <argument name="client" xsi:type="object">DevAll\Payze\Gateway\Http\Client\Guzzle</argument>
             <argument name="validator" xsi:type="null"/>
             <argument name="handler" xsi:type="object">DevAll\Payze\Gateway\Response\RefundDataHandler</argument>
         </arguments>
     </virtualType>
+
+    <virtualType name="PayzeRefundRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="payment" xsi:type="string">DevAll\Payze\Gateway\Request\RefundDataBuilder</item>
+                <item name="api" xsi:type="string">RefundApiBuilder</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="RefundApiBuilder" type="DevAll\Payze\Gateway\Request\ApiDataBuilder">
+        <arguments>
+            <argument name="method" xsi:type="string">PUT</argument>
+            <argument name="payzeApiUri" xsi:type="string">https://payze.io/v2/api/payment/refund</argument>
+        </arguments>
+    </virtualType>
+
+
     <!-- Commands END -->
     <type name="DevAll\Payze\Model\Ui\ConfigProvider">
         <arguments>
@@ -114,6 +165,20 @@
     <type name="DevAll\Payze\Gateway\Http\Client\Guzzle">
         <arguments>
             <argument name="converter" xsi:type="object">DevAll\Payze\Gateway\Http\JsonToArrayConverter</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="TransactionsCollection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">payze_payment_order</argument>
+            <argument name="resourceModel" xsi:type="string">DevAll\Payze\Model\ResourceModel\Order</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="devall_payze_transactions_listing_data_source" xsi:type="string">TransactionsCollection</item>
+            </argument>
         </arguments>
     </type>
 </config>

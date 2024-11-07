@@ -4,11 +4,17 @@
     <table name="payze_payment_order" resource="default" engine="innodb"
            comment="Payze Payment order table">
         <column xsi:type="int" name="id" padding="11" unsigned="false" nullable="false" identity="true" comment="id"/>
-        <column xsi:type="int" name="order_id" padding="11" unsigned="true" nullable="false" identity="false"
+        <column xsi:type="int" name="order_id" padding="11" unsigned="false" nullable="false" identity="false"
                 default="0"
                 comment="Order Id"/>
-        <column xsi:type="varchar" name="transaction_id" nullable="true" length="50" comment="Transaction ID"/>
+        <column xsi:type="varchar" name="transaction_id" nullable="false" length="50" comment="Transaction ID"/>
         <column xsi:type="varchar" name="payment_url" nullable="true" length="50" comment="Payment URL"/>
+        <column xsi:type="varchar" name="payment_type" nullable="true" length="50" comment="Payment Type"/>
+        <column xsi:type="varchar" name="payment_source" nullable="true" length="50" comment="Payment Source"/>
+        <column xsi:type="varchar" name="card_mask" nullable="true" length="50" comment="Card Mask"/>
+        <column xsi:type="varchar" name="card_expiration" nullable="true" length="50" comment="Card Expiration"/>
+        <column xsi:type="varchar" name="status" nullable="true" length="50" comment="Card Expiration"/>
+
         <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP"
                 comment="Created At"/>
         <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP"
