@@ -34,6 +34,8 @@ class Redirect implements HttpGetActionInterface
     ) {}
 
     /**
+     * Redirect to Payze payment page
+     *
      * @return ResultInterface|ResponseInterface|ResultRedirect
      */
     public function execute(): ResultInterface|ResponseInterface|ResultRedirect

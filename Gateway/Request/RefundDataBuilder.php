@@ -16,7 +16,10 @@ class RefundDataBuilder implements BuilderInterface
         private readonly SubjectReader $subjectReader,
     ) {}
 
-    public function build(array $buildSubject)
+    /**
+     * @inheritDoc
+     */
+    public function build(array $buildSubject): array
     {
         $paymentDO = $this->subjectReader->readPayment($buildSubject);
         return [

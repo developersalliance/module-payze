@@ -51,7 +51,7 @@ class Webhook implements HttpPostActionInterface
                 throw new LocalizedException(__('Webhook operation not supported'));
             }
 
-            $this->orderTransactionService->processRefund($orderReference);
+            $this->orderTransactionService->processRefund($orderReference, (float) $this->request->getParam('Amount'));
 
             $resultPage->setHttpResponseCode(200);
             $resultPage->setData([]);

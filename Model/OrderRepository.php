@@ -7,7 +7,6 @@ namespace DevAll\Payze\Model;
 use DevAll\Payze\Api\Data\OrderInterface;
 use DevAll\Payze\Model\ResourceModel\Order as OrderResource;
 use DevAll\Payze\Api\OrderRepositoryInterface;
-use Magento\Framework\Api\ExtensibleDataObjectConverter;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\NoSuchEntityException;
 
@@ -16,12 +15,10 @@ class OrderRepository implements OrderRepositoryInterface
     /**
      * @param OrderResource $orderResource
      * @param OrderFactory $orderFactory
-     * @param ExtensibleDataObjectConverter $extensibleDataObjectConverter
      */
     public function __construct(
         private readonly OrderResource $orderResource,
         private readonly OrderFactory $orderFactory,
-        private readonly ExtensibleDataObjectConverter $extensibleDataObjectConverter
     ) {}
 
     /**
@@ -67,22 +64,16 @@ class OrderRepository implements OrderRepositoryInterface
      */
     public function save(OrderInterface $order): OrderInterface
     {
-        $orderData = $this->extensibleDataObjectConverter->toNestedArray(
-            $order,
-            [],
-            OrderInterface::class
-        );
-
-        /** @var \DevAll\Payze\Model\Order $pzOrder */
-        $pzOrder = $this->orderFactory->create()->setData($orderData);
         try {
-            $this->orderResource->save($pzOrder);
+            $order = $this->orderFactory->create()->setData($order->getData());
+
+            $this->orderResource->save($order);
         } catch (\Exception $e) {
             throw new \Magento\Framework\Exception\CouldNotSaveException(
                 __('Could not save the order: %1', $e->getMessage())
             );
         }
 
-        return $pzOrder->getDataModel();
+        return $order->getDataModel();
     }
 }

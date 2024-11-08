@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace DevAll\Payze\Model\Data;
 
 use DevAll\Payze\Api\Data\OrderInterface;
-use Magento\Framework\Model\AbstractExtensibleModel;
+use Magento\Framework\Model\AbstractModel;
 
-class Order extends AbstractExtensibleModel implements OrderInterface
+class Order extends AbstractModel implements OrderInterface
 {
     /**
      * @inheritDoc

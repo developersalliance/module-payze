@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
         <add id="DevAll_Payze::payze"
              title="Payze"
              translate="title"
              module="DevAll_Payze"
              resource="DevAll_Payze::payze"
-             parent="Magento_Backend::content"
-             sortOrder="900"
+             parent="DevAll_Base::base"
+             sortOrder="10"
         />
         <add
                 id="DevAll_Payze::transactions"
@@ -17,6 +18,17 @@
                 resource="DevAll_Payze::transactions"
                 parent="DevAll_Payze::payze"
                 action="payze/transactions"
+                sortOrder="10"
+        />
+        <add
+                id="DevAll_Payze::configuration"
+                title="Configuration"
+                translate="title"
+                module="DevAll_Payze"
+                resource="DevAll_Payze::configuration"
+                parent="DevAll_Payze::payze"
+                action="adminhtml/system_config/edit/section/payment"
+                sortOrder="20"
         />
     </menu>
 </config>

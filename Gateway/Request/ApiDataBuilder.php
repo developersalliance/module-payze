@@ -20,8 +20,10 @@ class ApiDataBuilder implements BuilderInterface
         private readonly string $payzeApiUri
     ) {}
 
-
-    public function build(array $buildSubject)
+    /**
+     * @inheritDoc
+     */
+    public function build(array $buildSubject): array
     {
         return [
             'api' => [

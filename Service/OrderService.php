@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace DevAll\Payze\Service;
 
 use DevAll\Payze\Api\Data\OrderInterface;
-use DevAll\Payze\Api\Data\OrderInterfaceFactory;
 use DevAll\Payze\Api\OrderRepositoryInterface;
 use DevAll\Payze\Helper\Formatter;
 use DevAll\Payze\Model\OrderFactory;
@@ -36,16 +35,18 @@ class OrderService
         int $orderId,
         string $transactionId,
     ): OrderInterface {
-        $apiDetails = $this->payzeOrderDetails->get($transactionId);
-        $details = [];
-        $details['order_id'] = $orderId;
+        try {
+            $apiDetails = $this->payzeOrderDetails->get($transactionId);
+        } catch (\Throwable $e) {
+            $apiDetails = [];
+            $apiDetails['transaction_id'] = $transactionId;
+        }
 
-        \array_walk($apiDetails, function ($key, $value) use ($details) {
-            $details[$this->camelToUnderscore($key)] = $value;
-        });
+        $apiDetails['order_id'] = $orderId;
+        unset($apiDetails['id']);
 
         $pzOrder = $this->orderFactory->create([
-            'data' => $details
+            'data' => $apiDetails
         ])->getDataModel();
 
         return $this->orderRepository->save($pzOrder);

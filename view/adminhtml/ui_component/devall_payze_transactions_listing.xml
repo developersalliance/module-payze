@@ -74,11 +74,18 @@
                 <filter>textRange</filter>
             </settings>
         </column>
-        <column name="order_id">
-            <settings>
-                <label translate="true">Order ID</label>
-                <filter>textRange</filter>
-            </settings>
+        <column name="order_id" class="\DevAll\Payze\Ui\Component\Listing\Action\OrderViewAction">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="filter" xsi:type="string">false</item>
+                    <item name="viewUrlPath" xsi:type="string">sales/order/view</item>
+                    <item name="urlEntityParamName" xsi:type="string">order_id</item>
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/actions</item>
+                    <item name="template" xsi:type="string">ui/grid/cells/actions</item>
+                    <item name="label" xsi:type="string" translate="true">Order ID</item>
+                    <item name="sortOrder" xsi:type="number">1000</item>
+                </item>
+            </argument>
         </column>
         <column name="transaction_id">
             <settings>
@@ -88,7 +95,38 @@
         </column>
         <column name="payment_url">
             <settings>
-                <label translate="true">Paymant Url</label>
+                <label translate="true">Payment Url</label>
+                <bodyTmpl>ui/grid/cells/html</bodyTmpl>
+                <filter>text</filter>
+            </settings>
+        </column>
+        <column name="payment_type">
+            <settings>
+                <label translate="true">Payment Type</label>
+                <filter>text</filter>
+            </settings>
+        </column>
+        <column name="payment_source">
+            <settings>
+                <label translate="true">Payment Source</label>
+                <filter>text</filter>
+            </settings>
+        </column>
+        <column name="card_mask">
+            <settings>
+                <label translate="true">Card Mask</label>
+                <filter>text</filter>
+            </settings>
+        </column>
+        <column name="card_expiration">
+            <settings>
+                <label translate="true">Card Expiration</label>
+                <filter>text</filter>
+            </settings>
+        </column>
+        <column name="status">
+            <settings>
+                <label translate="true">Status</label>
                 <filter>text</filter>
             </settings>
         </column>
@@ -104,7 +142,6 @@
                 <filter>dateRange</filter>
             </settings>
         </column>
-<!--        <actionsColumn name="actions" class="Macademy\Minerva\Ui\Component\Listing\Column\Actions"/>-->
     </columns>
 </listing>
 

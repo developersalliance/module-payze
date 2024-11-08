@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DevAll\Payze\Service;
 
+use DevAll\Payze\Helper\Formatter;
 use DevAll\Payze\Model\Ui\ConfigProvider;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -11,6 +12,8 @@ use Psr\Log\LoggerInterface;
 
 class PayzeOrderDetails
 {
+    use Formatter;
+
     public const PAYZE_API_URL = 'https://payze.io/v2/api/payment/query/token-based';
 
     /**
@@ -29,31 +32,33 @@ class PayzeOrderDetails
      *
      * @param string $transactionId
      * @return array
+     * @throws GuzzleException
      */
     public function get(string $transactionId): array
     {
         $query = \sprintf('?$filter=transactionId eq \'%s\'', $transactionId);
+        $result = [];
 
-        try {
-            $response = $this->client->get(
-                self::PAYZE_API_URL . $query,
-                [
-                    'headers' => [
-                        'Authorization' => \sprintf(
-                            '%s:%s',
-                            $this->configProvider->getApiKey(),
-                            $this->configProvider->getApiSecret()
-                        ),
-                        'Content-Type' => 'application/json'
-                    ]
+        $response = $this->client->get(
+            self::PAYZE_API_URL . $query,
+            [
+                'headers' => [
+                    'Authorization' => \sprintf(
+                        '%s:%s',
+                        $this->configProvider->getApiKey(),
+                        $this->configProvider->getApiSecret()
+                    ),
+                    'Content-Type' => 'application/json'
                 ]
-            );
-        } catch (GuzzleException $e) {
-            return [];
+            ]
+        );
+
+        $response = json_decode($response->getBody()->getContents(), true);
+
+        foreach($response['data']['value'][0] as $key => $value) {
+            $result[$this->camelToUnderscore($key)] = $value;
         }
 
-        $result = json_decode($response->getBody()->getContents(), true);
-
-        return $result['data']['value'][0] ?? [];
+        return $result;
     }
 }

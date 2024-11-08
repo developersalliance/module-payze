@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DevAll\Payze\Controller\Payment;
 
 use DevAll\Payze\Service\OrderTransactionService;
+use GuzzleHttp\Exception\GuzzleException;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\RequestInterface;
@@ -34,7 +35,10 @@ class Result implements HttpGetActionInterface
     ) {}
 
     /**
+     * Handle Payze order result
+     *
      * @return Redirect
+     * @throws GuzzleException
      */
     public function execute(): Redirect
     {

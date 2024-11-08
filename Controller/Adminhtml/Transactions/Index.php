@@ -1,4 +1,6 @@
-<?php declare (strict_types=1);
+<?php
+
+declare (strict_types=1);
 
 namespace DevAll\Payze\Controller\Adminhtml\Transactions;
 
@@ -19,7 +21,6 @@ class Index extends Action implements HttpGetActionInterface
      * @param Context $context
      * @param PageFactory $pageFactory
      */
-
     public function __construct(
         Context $context,
         PageFactory $pageFactory
