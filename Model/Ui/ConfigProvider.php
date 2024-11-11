@@ -12,6 +12,7 @@ class ConfigProvider implements ConfigProviderInterface
     public const CODE = 'payze';
     public const XML_PATH_ACTIVE = 'active';
     public const XML_PATH_TITLE = 'title';
+    public const XML_PATH_LANGUAGE = 'language';
     public const XML_PATH_API_KEY = 'api_key';
     public const XML_PATH_API_SECRET = 'api_secret';
 
@@ -57,5 +58,15 @@ class ConfigProvider implements ConfigProviderInterface
     public function getApiKey(): string
     {
         return $this->config->getValue(self::XML_PATH_API_KEY) ?? '';
+    }
+
+    /**
+     * Get language
+     *
+     * @return string
+     */
+    public function getLanguage(): string
+    {
+        return $this->config->getValue(self::XML_PATH_LANGUAGE);
     }
 }

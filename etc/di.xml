@@ -181,4 +181,48 @@
             </argument>
         </arguments>
     </type>
+
+    <virtualType name="PayzeDebug" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/var/log/payze-debug.log</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="PayzeDebugLogger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="debug" xsi:type="object">PayzeDebug</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="DevAll\Payze\Service\OrderTransactionService">
+        <arguments>
+            <argument name="logger" xsi:type="object">PayzeDebugLogger</argument>
+        </arguments>
+    </type>
+
+    <type name="DevAll\Payze\Controller\Payment\Webhook">
+        <arguments>
+            <argument name="logger" xsi:type="object">PayzeDebugLogger</argument>
+        </arguments>
+    </type>
+
+    <type name="DevAll\Payze\Controller\Payment\Redirect">
+        <arguments>
+            <argument name="logger" xsi:type="object">PayzeDebugLogger</argument>
+        </arguments>
+    </type>
+
+    <type name="DevAll\Payze\Controller\Payment\Result">
+        <arguments>
+            <argument name="logger" xsi:type="object">PayzeDebugLogger</argument>
+        </arguments>
+    </type>
+
+    <type name="DevAll\Payze\Gateway\Http\Client\Guzzle">
+        <arguments>
+            <argument name="logger" xsi:type="object">PayzeDebugLogger</argument>
+        </arguments>
+    </type>
 </config>

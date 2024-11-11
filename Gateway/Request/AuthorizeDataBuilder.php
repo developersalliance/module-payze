@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DevAll\Payze\Gateway\Request;
 
+use DevAll\Payze\Model\Ui\ConfigProvider;
 use Magento\Framework\UrlInterface;
 use Magento\Payment\Gateway\Helper\SubjectReader;
 use Magento\Payment\Gateway\Request\BuilderInterface;
@@ -16,10 +17,12 @@ class AuthorizeDataBuilder implements BuilderInterface
     /**
      * @param SubjectReader $subjectReader
      * @param UrlInterface $urlBuilder
+     * @param ConfigProvider $configProvider
      */
     public function __construct(
         private readonly SubjectReader $subjectReader,
-        private readonly UrlInterface $urlBuilder
+        private readonly UrlInterface $urlBuilder,
+        private readonly ConfigProvider $configProvider
     ) {}
 
     /**
@@ -35,7 +38,7 @@ class AuthorizeDataBuilder implements BuilderInterface
                 'source' => 'Card',
                 'amount' => $this->subjectReader->readAmount($buildSubject),
                 'currency' => $order->getCurrencyCode(),
-                'language' => 'EN',
+                'language' => $this->configProvider->getLanguage(),
                 'hooks' => [
                     'webhookGateway' => $this->urlBuilder->getUrl(self::WEBHOOK_GATEWAY),
                     'successRedirectGateway' => $this->urlBuilder->getUrl(self::RESULT_REDIRECT_GATEWAY),

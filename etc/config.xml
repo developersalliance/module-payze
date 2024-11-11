@@ -16,6 +16,7 @@
                 <can_capture>1</can_capture>
                 <can_refund>1</can_refund>
                 <order_status>pending</order_status>
+                <language>en</language>
                 <group>payze_group</group>
             </payze>
         </payment>
