@@ -1,15 +1,16 @@
 {
   "name": "developersalliance/module-payze",
   "version": "1.0.0",
-  "description": "N/A",
+  "description": "This module integrates Payze payment gateway into Magento payment method",
   "type": "magento2-module",
   "require": {
     "magento/framework": "*",
     "magento/module-payment": "100.4.*",
-    "developersalliance/module-base": "1.0.0"
+    "developersalliance/module-base": "1.0.0",
+    "php": "^8.0|^8.1|^8.2|^8.3"
   },
   "license": [
-    "Proprietary"
+    "MIT"
   ],
   "autoload": {
     "files": [
