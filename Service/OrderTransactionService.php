@@ -55,11 +55,7 @@ class OrderTransactionService
             return;
         }
 
-        try {
-            $this->capture($payment, $order, $transactionId);
-        } catch (\Exception $e) {
-            $this->logger->critical($e->getMessage());
-        }
+        $this->capture($payment, $order, $transactionId);
 
         try {
             $pzOrderDetails = $this->payzeOrderDetails->get($transactionId);
@@ -162,12 +158,19 @@ class OrderTransactionService
         $payment->setTransactionId($transactionId);
         $payment->setCurrencyCode($order->getBaseCurrencyCode());
         $payment->setNotificationResult(true);
-        $payment->capture();
-        $payment->setIsTransactionClosed(true);
-        $order->setState(Order::STATE_PROCESSING);
 
-        if (Order::STATE_PROCESSING === $order->getState()) {
-            $order->addCommentToStatusHistory(__('Order processed by Payze.'), Order::STATE_PROCESSING);
+        try {
+            $payment->capture();
+            $payment->setIsTransactionClosed(true);
+            $order->setState(Order::STATE_PROCESSING);
+            if (Order::STATE_PROCESSING === $order->getState()) {
+                $order->addCommentToStatusHistory(__('Order processed by Payze.'), Order::STATE_PROCESSING);
+            }
+        } catch (\Exception $e) {
+            $payment->setIsTransactionClosed(true);
+            $order->setState(Order::STATE_CLOSED);
+            $order->addCommentToStatusHistory(__('Order failed to process by Payze.'), Order::STATE_CLOSED);
+            $this->logger->critical($e->getMessage());
         }
 
         $this->orderRepository->save($order);
