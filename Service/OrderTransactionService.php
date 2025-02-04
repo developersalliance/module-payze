@@ -34,17 +34,17 @@ class OrderTransactionService
      * Process order transaction
      *
      * @param string $transactionId
-     * @return void
+     * @return int
      * @throws LocalizedException|\GuzzleHttp\Exception\GuzzleException
      */
-    public function process(string $transactionId): void
+    public function process(string $transactionId): int
     {
         $pzOrder = $this->pzOrderRepository->getByTransactionId($transactionId);
         $order = $this->orderRepository->get($pzOrder->getOrderId());
 
         if ($order->getState() === Order::STATE_CLOSED) {
             $this->logger->info('Don\'t need to update order because state is already closed '. $transactionId);
-            return;
+            return 0;
         }
 
         /** @var Payment $payment */
@@ -52,10 +52,10 @@ class OrderTransactionService
 
         if ($payment->getTransactionId() && $order->getState() === Order::STATE_PROCESSING) {
             $this->logger->info('Don\'t need to update order because state is already in progress '. $transactionId);
-            return;
+            return 0;
         }
 
-        $this->capture($payment, $order, $transactionId);
+        $result = $this->capture($payment, $order, $transactionId);
 
         try {
             $pzOrderDetails = $this->payzeOrderDetails->get($transactionId);
@@ -67,6 +67,8 @@ class OrderTransactionService
         }
 
         $this->updatePayzeOrder($pzOrderDetails, $transactionId);
+
+        return $result;
     }
 
     /**
@@ -153,8 +155,10 @@ class OrderTransactionService
      * @throws InputException
      * @throws NoSuchEntityException|LocalizedException
      */
-    private function capture(Payment $payment, OrderInterface $order, string $transactionId): void
+    private function capture(Payment $payment, OrderInterface $order, string $transactionId): int
     {
+        $result = 0;
+
         $payment->setTransactionId($transactionId);
         $payment->setCurrencyCode($order->getBaseCurrencyCode());
         $payment->setNotificationResult(true);
@@ -166,14 +170,18 @@ class OrderTransactionService
             if (Order::STATE_PROCESSING === $order->getState()) {
                 $order->addCommentToStatusHistory(__('Order processed by Payze.'), Order::STATE_PROCESSING);
             }
+
+            $result = 1;
         } catch (\Exception $e) {
             $payment->setIsTransactionClosed(true);
-            $order->setState(Order::STATE_CANCELED);
+            $order->setState(Order::STATE_CLOSED);
             $order->addCommentToStatusHistory(__('Order failed to process by Payze.'), Order::STATE_CLOSED);
             $this->logger->critical($e->getMessage());
         }
 
         $this->orderRepository->save($order);
+
+        return $result;
     }
 
     /**

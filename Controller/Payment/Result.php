@@ -51,9 +51,15 @@ class Result implements HttpGetActionInterface
             }
 
             try {
-                $this->orderTransactionService->process($transactionId);
+                $result = $this->orderTransactionService->process($transactionId);
+
+                if ($result === 0) {
+                    return $this->redirectFactory->create()->setPath('checkout/onepage/failure');
+                }
             } catch (\Exception $e) {
                 $this->logger->critical($e->getMessage());
+
+                return $this->redirectFactory->create()->setPath('checkout/onepage/failure');
             }
 
             return $this->redirectFactory->create()->setPath('checkout/onepage/success');
