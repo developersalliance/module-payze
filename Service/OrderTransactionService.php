@@ -55,7 +55,11 @@ class OrderTransactionService
             return;
         }
 
-        $this->capture($payment, $order, $transactionId);
+        try {
+            $this->capture($payment, $order, $transactionId);
+        } catch (\Exception $e) {
+            $this->logger->critical($e->getMessage());
+        }
 
         try {
             $pzOrderDetails = $this->payzeOrderDetails->get($transactionId);
@@ -93,7 +97,22 @@ class OrderTransactionService
         /** @var Payment $payment */
         $payment = $order->getPayment();
 
-        $this->refund($payment, $order, $transactionId, $amount);
+        try {
+            $this->refund($payment, $order, $transactionId, $amount);
+        } catch (\Exception $e) {
+            $this->logger->critical($e->getMessage());
+        }
+
+        try {
+            $pzOrderDetails = $this->payzeOrderDetails->get($transactionId);
+        } catch (\Throwable $e) {
+            $this->logger->critical($e->getMessage());
+            throw new NoSuchEntityException(
+                __('Payze Order with ID "%1" does not exist.', $transactionId)
+            );
+        }
+
+        $this->updatePayzeOrder($pzOrderDetails, $transactionId);
     }
 
     /**

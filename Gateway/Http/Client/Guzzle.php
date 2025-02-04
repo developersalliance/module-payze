@@ -12,18 +12,18 @@ use Magento\Payment\Gateway\Http\ClientInterface;
 use Magento\Payment\Gateway\Http\ConverterException;
 use Magento\Payment\Gateway\Http\ConverterInterface;
 use Magento\Payment\Gateway\Http\TransferInterface;
-use Magento\Payment\Model\Method\Logger;
+use Psr\Log\LoggerInterface;
 
 class Guzzle implements ClientInterface
 {
     /**
      * @param ClientFactory $clientFactory
-     * @param Logger $logger
+     * @param LoggerInterface $logger
      * @param ConverterInterface $converter
      */
     public function __construct(
         private readonly ClientFactory $clientFactory,
-        private readonly Logger $logger,
+        private readonly LoggerInterface $logger,
         private readonly ConverterInterface $converter
     ) {
     }
@@ -66,7 +66,7 @@ class Guzzle implements ClientInterface
         } catch (ConverterException $e) {
             throw $e;
         } finally {
-            $this->logger->debug($log);
+            $this->logger->debug('Payze request debug: ', $log);
         }
 
         return $result;
