@@ -168,7 +168,7 @@ class OrderTransactionService
             }
         } catch (\Exception $e) {
             $payment->setIsTransactionClosed(true);
-            $order->setState(Order::STATE_CLOSED);
+            $order->setState(Order::STATE_CANCELED);
             $order->addCommentToStatusHistory(__('Order failed to process by Payze.'), Order::STATE_CLOSED);
             $this->logger->critical($e->getMessage());
         }
